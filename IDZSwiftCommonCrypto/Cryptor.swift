@@ -26,10 +26,10 @@ public class Cryptor : StreamCryptor, Updateable
     public func final() -> [UInt8]?
     {
         let byteCount = Int(self.getOutputLength(0, isFinal: true))
-        var dataOut = Array<UInt8>(count:byteCount, repeatedValue:0)
+        var dataOut = Array<UInt8>(repeating: 0, count: byteCount)
         var dataOutMoved = 0
         (dataOutMoved, self.status) = final(&dataOut)
-        if(self.status != Status.Success) {
+        if(self.status != Status.success) {
             return nil
         }
         accumulator += dataOut[0..<Int(dataOutMoved)]
@@ -45,13 +45,13 @@ public class Cryptor : StreamCryptor, Updateable
         
         - returns: this Cryptor object or nil if an error occurs (for optional chaining)
     */
-    public func update(buffer: UnsafePointer<Void>, _ byteCount: Int) -> Self?
+    public func update(_ buffer: UnsafePointer<Void>, _ byteCount: Int) -> Self?
     {
         let outputLength = self.getOutputLength(byteCount, isFinal: false)
-        var dataOut = Array<UInt8>(count:outputLength, repeatedValue:0)
+        var dataOut = Array<UInt8>(repeating: 0, count: outputLength)
         var dataOutMoved = 0
         update(buffer, byteCountIn: byteCount, bufferOut: &dataOut, byteCapacityOut: dataOut.count, byteCountOut: &dataOutMoved)
-        if(self.status != Status.Success) {
+        if(self.status != Status.success) {
             return nil
         }
         accumulator += dataOut[0..<Int(dataOutMoved)]
