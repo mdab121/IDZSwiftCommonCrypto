@@ -647,7 +647,7 @@ class IDZSwiftCommonCryptoTests: XCTestCase {
 		let key: [UInt8] = [0xb2, 0xdd, 0x82, 0x0c, 0x32, 0x2f, 0xcd, 0xac, 0x63, 0xbe, 0x56, 0x9b, 0x69, 0x07, 0xa8, 0xc6, 0x68, 0xa8, 0x8c, 0x76, 0xb3, 0x86, 0x1d, 0x5d, 0x7a, 0x0f, 0x4c, 0x29, 0x9e, 0x46, 0x15, 0x44]
 		let iv: [UInt8] = [0x38, 0xa6, 0x44, 0xdd, 0xe4, 0x22, 0x12, 0xeb, 0x50, 0x2e, 0x84, 0xb4, 0x09, 0xd5, 0x27, 0x7c]
 		let messagePayload = arrayFromHexString("048293a942e3cc54a4f1d4fe54b3137402ab116cd1f9240d133b37167f5f5338d57c452459d7cc8a3fda478b22b1256fed657c7ca883a558e36546f291dfd42f55ce1f56b036cdf368ca8b203f2f29c8da29f5079e692cc8c8d284aaa4b31167")
-		let encryptedJSON: [String: AnyObject] = [
+		let encryptedJSON: [String: Any] = [
 			"type": 1,
 			"owner": [
 				"firstName": "Michał",
@@ -663,7 +663,7 @@ class IDZSwiftCommonCryptoTests: XCTestCase {
 		do {
 			let decryptedJSON = try JSONSerialization.jsonObject(with: stringData, options: [JSONSerialization.ReadingOptions.allowFragments])
 			XCTAssertTrue(decryptedJSON is NSDictionary)
-			XCTAssertEqual(decryptedJSON as? NSDictionary, encryptedJSON)
+			XCTAssertTrue((decryptedJSON as? NSDictionary)?.isEqual(to: encryptedJSON) == true)
 			
 		} catch {
 			XCTFail()

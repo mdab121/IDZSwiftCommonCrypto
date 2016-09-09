@@ -18,8 +18,8 @@ func convertHexDigit(_ c : UnicodeScalar) -> UInt8
 {
     switch c {
         case UnicodeScalar("0")...UnicodeScalar("9"): return UInt8(c.value - UnicodeScalar("0").value)
-        case UnicodeScalar("a")...UnicodeScalar("f"): return UInt8(c.value - UnicodeScalar("a").value + 0xa)
-        case UnicodeScalar("A")...UnicodeScalar("F"): return UInt8(c.value - UnicodeScalar("A").value + 0xa)
+        case UnicodeScalar("a")...UnicodeScalar("f"): return UInt8(c.value - UnicodeScalar("a").value) + 0xa
+        case UnicodeScalar("A")...UnicodeScalar("F"): return UInt8(c.value - UnicodeScalar("A").value) + 0xa
         default: fatalError("convertHexDigit: Invalid hex digit")
     }
 }
@@ -104,7 +104,7 @@ public func hexStringFromArray(_ a : [UInt8], uppercase : Bool = false) -> Strin
 ///
 public func hexNSStringFromArray(_ a : [UInt8], uppercase : Bool = false) -> NSString
 {
-    return a.map() { String(format:uppercase ? "%02X" : "%02x", $0) }.reduce("", +)
+	return NSString(string: a.map() { String(format:(uppercase ? "%02X" : "%02x"), $0) }.reduce("", +))
 }
 
 ///

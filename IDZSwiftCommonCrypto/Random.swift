@@ -26,7 +26,7 @@ public class Random
     - return: .Success or .RNGFailure as appropriate.
     
      */
-    public class func generateBytes(_ bytes : UnsafeMutablePointer<Void>, byteCount : Int ) -> RNGStatus
+    public class func generateBytes(_ bytes : UnsafeMutableRawPointer, byteCount : Int ) -> RNGStatus
     {
         let statusCode = CCRandomGenerateBytes(bytes, byteCount)
         guard let status = Status(rawValue: statusCode) else {

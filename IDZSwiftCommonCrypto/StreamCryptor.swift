@@ -380,8 +380,8 @@ public class StreamCryptor
         - parameter keyByteCount: number of bytes in the key
         - parameter ivBuffer: initialization vector buffer
     */
-    public init(operation: Operation, algorithm: Algorithm, options: Options, keyBuffer: UnsafePointer<Void>,
-        keyByteCount: Int, ivBuffer: UnsafePointer<Void>)
+    public init(operation: Operation, algorithm: Algorithm, options: Options, keyBuffer: UnsafeRawPointer,
+        keyByteCount: Int, ivBuffer: UnsafeRawPointer)
     {
         guard algorithm.isValidKeySize(keyByteCount) else  { fatalError("FATAL_ERROR: Invalid key size.") }
 
@@ -406,7 +406,7 @@ public class StreamCryptor
 	- parameter ivBuffer: initialization vector buffer
 	
 	*/
-	public init(operation: Operation, algorithm: Algorithm, mode: Mode, padding: Padding, keyBuffer: UnsafePointer<Void>, keyByteCount: Int, ivBuffer: UnsafePointer<Void>) {
+	public init(operation: Operation, algorithm: Algorithm, mode: Mode, padding: Padding, keyBuffer: UnsafeRawPointer, keyByteCount: Int, ivBuffer: UnsafeRawPointer) {
 		
 		guard algorithm.isValidKeySize(keyByteCount) else  { fatalError("FATAL_ERROR: Invalid key size.") }
 		
@@ -430,7 +430,7 @@ public class StreamCryptor
         - parameter outByteCount: on successful completion, the number of bytes written to the output buffer
         - returns: 
     */
-    @discardableResult public func update(_ bufferIn: UnsafePointer<Void>, byteCountIn: Int, bufferOut: UnsafeMutablePointer<Void>, byteCapacityOut : Int, byteCountOut : inout Int) -> Status
+    @discardableResult public func update(_ bufferIn: UnsafeRawPointer, byteCountIn: Int, bufferOut: UnsafeMutableRawPointer, byteCapacityOut : Int, byteCountOut : inout Int) -> Status
     {
         if(self.status == Status.success)
         {
@@ -461,7 +461,7 @@ public class StreamCryptor
         - parameter outByteCapacity: capacity of the output buffer in bytes
         - parameter outByteCount: on successful completion, the number of bytes written to the output buffer
     */
-    @discardableResult public func final(_ bufferOut: UnsafeMutablePointer<Void>, byteCapacityOut : Int, byteCountOut : inout Int) -> Status
+    @discardableResult public func final(_ bufferOut: UnsafeMutableRawPointer, byteCapacityOut : Int, byteCountOut : inout Int) -> Status
     {
         if(self.status == Status.success)
         {

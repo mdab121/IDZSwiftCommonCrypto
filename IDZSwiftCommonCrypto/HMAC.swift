@@ -92,7 +92,7 @@ public class HMAC : Updateable
     let context = Context.allocate(capacity: 1)
     var algorithm : Algorithm
     
-    init(algorithm : Algorithm, keyBuffer: UnsafePointer<Void>, keyByteCount: Int)
+    init(algorithm : Algorithm, keyBuffer: UnsafeRawPointer, keyByteCount: Int)
     {
         self.algorithm = algorithm
         CCHmacInit(context, algorithm.nativeValue(), keyBuffer, size_t(keyByteCount))
@@ -144,7 +144,7 @@ public class HMAC : Updateable
     ///
     /// - returns: the calculated HMAC
     ///
-    public func update(_ buffer : UnsafePointer<Void>, _ byteCount : size_t) -> Self?
+    public func update(_ buffer : UnsafeRawPointer, _ byteCount : size_t) -> Self?
     {
         CCHmacUpdate(context, buffer, byteCount)
         return self 

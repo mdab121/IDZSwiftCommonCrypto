@@ -11,11 +11,11 @@ let handler: @convention(c) (NSException) -> Void = {
 NSSetUncaughtExceptionHandler(handler)
 
 // MARK: - Task Utilities
-func runShellCommand(command: String) -> String? {
+func runShellCommand(_ command: String) -> String? {
     let args: [String] = command.characters.split { $0 == " " }.map(String.init)
     let other = args[1..<args.count]
-    let outputPipe = NSPipe()
-    let task = NSTask()
+    let outputPipe = Pipe()
+    let task = Process()
     task.launchPath = args[0]
     task.arguments = other.map { $0 }
     task.standardOutput = outputPipe
@@ -25,17 +25,17 @@ func runShellCommand(command: String) -> String? {
     guard task.terminationStatus == 0 else { return nil }
 
     let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
-    return String(data:outputData, encoding: NSUTF8StringEncoding)
+    return String(data:outputData, encoding: String.Encoding.utf8)
 }
 
 // MARK: - File System Utilities
-func fileExists(filePath: String) -> Bool {
-    return NSFileManager.defaultManager().fileExistsAtPath(filePath)
+func fileExists(_ filePath: String) -> Bool {
+	return FileManager.default.fileExists(atPath: filePath)
 }
 
-func mkdir(path: String) -> Bool {
+func mkdir(_ path: String) -> Bool {
     do {
-        try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+		try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         return true
     }
     catch {
@@ -44,15 +44,15 @@ func mkdir(path: String) -> Bool {
 }
 
 // MARK: - String Utilities
-func trim(s: String) -> String {
-    return ((s as NSString).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) as String)
+func trim(_ s: String) -> String {
+	return ((s as NSString).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) as String)
 }
 
-func trim(s: String?) -> String? {
-    return (s == nil) ? nil : (trim(s!) as String)
+func trim(_ s: String?) -> String? {
+	return (s == nil) ? nil : (trim(s!) as String)
 }
 
-@noreturn func reportError(message: String) {
+func reportError(_ message: String) -> Never {
     print("ERROR: \(message)")
     exit(1)
 }
@@ -70,7 +70,8 @@ enum SDK: String {
     
 }
 
-guard let sdk = SDK(rawValue: Process.arguments[1])?.rawValue else { reportError("SDK must be one of \(SDK.all.map { $0.rawValue })") }
+let arguments = ProcessInfo().arguments
+guard let sdk = SDK(rawValue: arguments[arguments.count-2])?.rawValue else { reportError("SDK must be one of \(SDK.all.map { $0.rawValue })") }
 guard let sdkVersion = trim(runShellCommand("/usr/bin/xcrun --sdk \(sdk) --show-sdk-version")) else {
     reportError("ERROR: Failed to determine SDK version for \(sdk)")
 }
@@ -86,8 +87,8 @@ if verbose {
 
 let moduleDirectory: String
 let moduleFileName: String
-if Process.arguments.count > 2 {
-    moduleDirectory =  "\(Process.arguments[2])/Frameworks/\(sdk)/CommonCrypto.framework"
+if true {
+    moduleDirectory =  "\(arguments.last!)/Frameworks/\(sdk)/CommonCrypto.framework"
     moduleFileName = "module.map"
 }
 else {
@@ -116,7 +117,7 @@ let moduleMapFile =
 
 let moduleMapPath = "\(moduleDirectory)/\(moduleFileName)"
 do {
-    try moduleMapFile.writeToFile(moduleMapPath, atomically: true, encoding:NSUTF8StringEncoding)
+	try moduleMapFile.write(toFile: moduleMapPath, atomically: true, encoding:String.Encoding.utf8)
     print("Successfully created module \(moduleMapPath)")
     exit(0)
 }

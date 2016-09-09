@@ -19,7 +19,7 @@ public protocol Updateable {
     /// - parameter buffer: pointer to the data buffer 
     /// - parameter byteCount: length of the buffer in bytes
     /// - returns: self if no error for optional chaining, null otherwise
-    @discardableResult func update(_ buffer : UnsafePointer<Void>, _ byteCount : size_t) -> Self?
+    @discardableResult func update(_ buffer : UnsafeRawPointer, _ byteCount : size_t) -> Self?
 }
 
 ///

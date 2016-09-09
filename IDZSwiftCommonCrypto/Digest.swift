@@ -88,7 +88,7 @@ public class Digest : Updateable
         - parameter the: number of bytes in buffer
         - returns: this Digest object (for optional chaining)
     */
-    @discardableResult public func update(_ buffer: UnsafePointer<Void>, _ byteCount: size_t) -> Self?
+    @discardableResult public func update(_ buffer: UnsafeRawPointer, _ byteCount: size_t) -> Self?
     {
         engine.update(buffer, CC_LONG(byteCount))
         return self
@@ -112,7 +112,7 @@ public class Digest : Updateable
  */
 protocol DigestEngine
 {
-    func update(_ buffer: UnsafePointer<Void>, _ byteCount: CC_LONG)
+    func update(_ buffer: UnsafeRawPointer, _ byteCount: CC_LONG)
     func final() -> [UInt8]
 }
 /**
@@ -121,7 +121,7 @@ protocol DigestEngine
  */
 class DigestEngineCC<C> : DigestEngine {
     typealias Context = UnsafeMutablePointer<C>
-    typealias Buffer = UnsafePointer<Void>
+    typealias Buffer = UnsafeRawPointer
     typealias Digest = UnsafeMutablePointer<UInt8>
     typealias Initializer = (Context) -> (Int32)
     typealias Updater = (Context, Buffer, CC_LONG) -> (Int32)
@@ -133,7 +133,7 @@ class DigestEngineCC<C> : DigestEngine {
     var finalizer : Finalizer
     var length : Int32
     
-    init(initializer : Initializer, updater : Updater, finalizer : Finalizer, length : Int32)
+    init(initializer: @escaping Initializer, updater : @escaping Updater, finalizer : @escaping Finalizer, length : Int32)
     {
         self.initializer = initializer
         self.updater = updater
